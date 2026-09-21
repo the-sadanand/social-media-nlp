@@ -1,0 +1,30 @@
+
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8501:8501"                    # Streamlit default port
+
+    volumes:
+      - ./data:/app/data               # Mount dataset (persists across rebuilds)
+      - ./output:/app/output           # Mount output  (artifacts persist locally)
+      - ./src:/app/src                 # Mount source  (live code changes in dev)
+
+    command: >
+      sh -c "python run_pipeline.py &&
+             streamlit run app.py
+               --server.port=8501
+               --server.address=0.0.0.0
+               --server.headless=true"
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s               # Pipeline takes ~60s; give extra buffer
+
+    environment:
+      - PYTHONUNBUFFERED=1             # Ensure print() output appears in logs
