@@ -7,7 +7,7 @@ from pathlib import Path
 import nltk
 import pandas as pd
 from nltk.corpus import stopwords
-form nltk.stem import WordNetLemmatizer
+from nltk.stem import WordNetLemmatizer
 
 from nltk.tokenize import word_tokenize
 
@@ -61,5 +61,20 @@ def preprocess_data(input_path:"data/Tweets.csv",
     # drop rows where cleaning produced a empty string
     
     before = len(df)
+    df = df[df["cleaned_text"].str.strip().astype(bool)].copy()
+    dropped = before - len(df)
+    if dropped:
+        print(f"Dropped {dropped} empty rows after cleaning")
+        
+    # save only the colum the spec requires 
     
+    output_dir = Path(output_path).parent
+    output_dir.mkdir(parents=True ,exist_ok=True)
+    df[["tweet_id", "cleaned_text"]].to_csv(output_path ,index=False)
+    print(f"  [OK] Saved {len(df):,} preprocessed tweets -> {output_path}")
+    
+    return df
+
+if __name__ == "__main__":
+    preprocess_data()
     
