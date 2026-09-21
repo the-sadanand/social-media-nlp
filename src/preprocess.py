@@ -3,12 +3,10 @@ preprocess.py -> Text Preprocessing pipline
 """
 import re
 from pathlib import Path
-
 import nltk
 import pandas as pd
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-
 from nltk.tokenize import word_tokenize
 
 # Download nltk resouces for once
@@ -24,13 +22,13 @@ def clean_text(text:str) -> str:
     if not isinstance(text,str):
         return ""
     
-    text = re.sub(r"http\S+|www\.\S+", "", text) #urls
+    text = re.sub(r"http\S+|www\.\S+", "", text)
     text = re.sub(r"@\w+","",text) # mentions
     text = re.sub(r"#\w+","",text) # hastags
-    text = re.sub(r"&\w+;","",text) # html tags
+    text = re.sub(r"&\w+;","",text) # html ententies
     text = re.sub(r"[^a-zA-Z\s]","",text) #keep only letters and spaces
     text = text.lower() #lower
-    text = re.sub(r"\s+","",text) # collaspe white spaces
+    text = re.sub(r"\s+"," ",text) # collaspe white spaces
     
     return text 
 
@@ -44,8 +42,8 @@ def tokenize_and_lemmatize(text:str) -> str:
     
     return " ".join(tokens)
 
-def preprocess_data(input_path:"data/Tweets.csv",
-    output_path:"output/preprocessed_data.csv") -> pd.DataFrame:
+def preprocess_data(input_path: str ="data/Tweets.csv",
+    output_path:str = "output/preprocessed_data.csv") -> pd.DataFrame:
     
     print("="*60)
     print("Step 1 : text preprocessing")
@@ -55,9 +53,9 @@ def preprocess_data(input_path:"data/Tweets.csv",
     
     # apply cleaning pipeline
     print("  Cleaning text (URLs, mentions, hashtags, punctuation)...")
-    df["cleaned_text"] = df["cleaned_text"].apply(clean_text)
+    df["cleaned_text"] = df["text"].apply(clean_text)
     print("  Tokenizing, removing stopwords, lemmatizing...")
-    df["cleaned_text"] = df["cleaned_text"].apply(tokenize_and_lemmatize)
+    df["cleaned_text"] = df["text"].apply(tokenize_and_lemmatize)
     # drop rows where cleaning produced a empty string
     
     before = len(df)
