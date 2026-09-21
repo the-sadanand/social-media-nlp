@@ -67,3 +67,71 @@ def trian_and_evaluate(
 
     print(f"  Train: {len(X_train):,}  |  Test: {len(X_test):,}")
     # 3.  TF-IDF vectorisation
+    tfidf = TfidfVectorizer(
+        max_features=10_000,
+        ngram_range=(1, 2),
+        min_df=2,
+    )
+    X_train_vec = tfidf.fit_transform(X_train)
+    X_test_vec = tfidf.transform(X_test)
+    
+    print(f"  TF-IDF vocabulary size: {len(tfidf.vocabulary_):,}")
+    # 4.  Train Logistic Regression
+    
+    clf = LogisticRegression(
+        max_iter=1000,
+        C=1.0,
+        solver="lbfgs",
+        class_weight="balanced",
+        random_state=random_state,
+    )
+    clf.fit(X_train_vec, y_train)
+    
+
+    # 5.  Evaluate
+    
+    y_pred = clf.predict(X_test_vec)
+
+    metrics = {
+        "accuracy": round(float(accuracy_score(y_test, y_pred)), 4),
+        "precision_macro": round(float(precision_score(y_test, y_pred, average="macro")), 4),
+        "recall_macro": round(float(recall_score(y_test, y_pred, average="macro")), 4),
+        "f1_score_macro": round(float(f1_score(y_test, y_pred, average="macro")), 4),
+    }
+
+    print(f"\n  {'Metric':<20} {'Value':>8}")
+    print(f"  {'-'*28}")
+    for k, v in metrics.items():
+        print(f"  {k:<20} {v:>8.4f}")
+
+    print(f"\n  Classification Report:\n")
+    print(classification_report(y_test, y_pred, digits=4))
+
+
+    # 6.  Save artifacts
+
+    with open(out / "tfidf_vectorizer.pkl", "wb") as f:
+        pickle.dump(tfidf, f)
+
+    with open(out / "sentiment_model.pkl", "wb") as f:
+        pickle.dump(clf, f)
+
+    with open(out / "sentiment_metrics.json", "w") as f:
+        json.dump(metrics, f, indent=2)
+
+    pd.DataFrame({
+        "tweet_id": test_tweet_ids.values,
+        "predicted_sentiment": y_pred,
+    }).to_csv(out / "sentiment_predictions.csv", index=False)
+
+    print(f"  [OK] Saved: tfidf_vectorizer.pkl, sentiment_model.pkl, "
+          f"sentiment_metrics.json, sentiment_predictions.csv")
+
+    return clf, tfidf, metrics
+
+
+
+
+
+if __name__ == "__main__":
+    train_and_evaluate()
