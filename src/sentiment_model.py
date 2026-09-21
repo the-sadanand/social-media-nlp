@@ -12,7 +12,7 @@ import pickle
 from pathlib import Path
 
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 from sklearn.linear_model import LogisticRegression
 
@@ -26,7 +26,7 @@ from sklearn.metrics import(
 
 from sklearn.model_selection import train_test_split
 
-def trian_and_evaluate(
+def train_and_evaluate(
     preprocessed_path : str = "output/preprocessed_data.csv",
     raw_data_path : str = "data/Tweets.csv",
     output_dir : str = "output",
@@ -48,7 +48,7 @@ def trian_and_evaluate(
     
     preprocessed = pd.read_csv(preprocessed_path).drop_duplicates(subset="tweet_id")
     raw = pd.read_csv(raw_data_path)[["tweet_id","airline_sentiment"]].drop_duplicates(subset="tweet_id")
-    df = preprocessed.merge(row , on="tweet_id" , how= "inner")
+    df = preprocessed.merge(raw , on="tweet_id" , how= "inner")
     print(f"  Merged dataset: {len(df):,} rows  |  "
           f"Labels: {df['airline_sentiment'].value_counts().to_dict()}")
     X = df["cleaned_text"]
