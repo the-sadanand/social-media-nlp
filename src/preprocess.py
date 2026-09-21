@@ -44,6 +44,22 @@ def tokenize_and_lemmatize(text:str) -> str:
     
     return " ".join(tokens)
 
-
+def preprocess_data(input_path:"data/Tweets.csv",
+    output_path:"output/preprocessed_data.csv") -> pd.DataFrame:
+    
+    print("="*60)
+    print("Step 1 : text preprocessing")
+    print("="*60)
+    df = pd.read_csv(input_path)
+    print(f"Loaded{len(df):,} tweets from {input_path}")
+    
+    # apply cleaning pipeline
+    print("  Cleaning text (URLs, mentions, hashtags, punctuation)...")
+    df["cleaned_text"] = df["cleaned_text"].apply(clean_text)
+    print("  Tokenizing, removing stopwords, lemmatizing...")
+    df["cleaned_text"] = df["cleaned_text"].apply(tokenize_and_lemmatize)
+    # drop rows where cleaning produced a empty string
+    
+    before = len(df)
     
     
