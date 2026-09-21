@@ -33,4 +33,17 @@ def clean_text(text:str) -> str:
     text = re.sub(r"\s+","",text) # collaspe white spaces
     
     return text 
+
+def tokenize_and_lemmatize(text:str) -> str:
+    # Tokenize, remove stopwords, and lemmatize a cleaned text string.
+    
+    # returns a single joined spaced string cuz downstream TF-IDF/CountVectorizer except stirng input
+    
+    tokens = word_tokenize(text)
+    tokens = [_LEMMATIZER.lemmatize(tok) for tok in tokens if tok not in _STOP_WORDS and len(tok)>2]
+    
+    return " ".join(tokens)
+
+
+    
     
