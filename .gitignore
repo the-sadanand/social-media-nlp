@@ -13,3 +13,22 @@ env/
 Thumbs.db
 
 .env
+.env.*
+!.env.example
+
+# Secrets and credentials
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+service-account*.json
+
+# Model and generated artifacts
+*.pkl
+output/*
+!output/.gitkeep
+
+# Local datasets
+data/*
+!data/.gitkeep
