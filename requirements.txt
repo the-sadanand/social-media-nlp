@@ -6,4 +6,4 @@ scikit-learn==1.7.1
 pyLDAvis==3.4.1
 plotly==6.3.0
 gensim==4.3.3
-scipy==1.13.1
+scipy==1.18.1
