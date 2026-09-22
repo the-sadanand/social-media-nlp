@@ -11,9 +11,5 @@ env/
 *.swo
 .DS_Store
 Thumbs.db
-data/*.csv
-output/*.pkl
-output/*.json
-output/*.html
-output/*.csv
+
 .env
