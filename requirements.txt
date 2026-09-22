@@ -5,5 +5,5 @@ nltk==3.9.1
 scikit-learn==1.7.1
 pyLDAvis==3.4.1
 plotly==6.3.0
-gensim==4.3.3
+gensim==4.4.0
 scipy==1.13.1
