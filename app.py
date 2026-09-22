@@ -75,6 +75,7 @@ def check_artifacts() -> bool:
         "sentiment_model.pkl",
         "sentiment_metrics.json",
         "sentiment_predictions.csv",
+        "sentiment_feature_importance.json",
         "lda_model.pkl",
         "count_vectorizer.pkl",
         "topics.json",
@@ -235,6 +236,35 @@ def page_sentiment() -> None:
             margin=dict(t=20, b=20),
         )
         st.plotly_chart(fig_bar, use_container_width=True)
+
+    st.markdown("---")
+
+    st.subheader("Model Feature Importance")
+    st.markdown(
+        "These are the strongest TF-IDF features learned by Logistic Regression. "
+        "Positive coefficients push a prediction toward the selected sentiment class."
+    )
+
+    feature_path = OUTPUT_DIR / "sentiment_feature_importance.json"
+    if feature_path.exists():
+        with open(feature_path, encoding="utf-8") as f:
+            feature_importance = json.load(f)
+
+        for sentiment, data in feature_importance.items():
+            st.markdown(f"**{sentiment.title()} sentiment**")
+
+            positive_df = pd.DataFrame(data["top_positive_features"])
+            positive_df.columns = ["Feature", "Coefficient"]
+
+            st.dataframe(
+                positive_df,
+                use_container_width=True,
+                hide_index=True,
+            )
+    else:
+        st.info("Feature importance artifact not found. Run the pipeline first.")
+
+    st.markdown("---")
 
     st.subheader("Sample Predictions")
 
